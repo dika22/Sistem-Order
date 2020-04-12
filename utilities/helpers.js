@@ -20,13 +20,11 @@ exports.generateToken = (res)=>{
 }
 // Decode Token
 exports.decodeToken = (token)=>{
-	// console.log(token)
 	try {
 	  let newtoken = token.replace("Bearer ", "")
 	  let decoded = jwt.verify(newtoken, process.env.KEY);
 	  return decoded;
 	} catch(err) {
-		console.log(err)
 	  return err
 	}
 }

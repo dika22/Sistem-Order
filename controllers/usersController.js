@@ -14,8 +14,8 @@ exports.index = function(req, res) {
 // Get All Users
 exports.findUsers = function(req,res) {
 	try{
-		let decode = helpers.decodeToken(req.headers.authorization)
-		if(decode.level == 1){
+		let getToken = helpers.decodeToken(req.headers.authorization)
+		if(!getToken ||  getToken.level == 1){
 			User.find((err,respon)=>{
 				if (!err) {
 					res.json(respon)
@@ -46,6 +46,8 @@ exports.createUser = function(req,res){
 					let newUser = new User(req.body)
 						// set token null 
 						newUser.token = "";
+						//default user 
+						newUser.as = 2 
 					newUser.save(function(err,respon){
 						if (err) {
 							console.log(err)

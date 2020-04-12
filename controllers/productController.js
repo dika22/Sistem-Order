@@ -8,14 +8,14 @@ exports.findProducts = function(req,res) {
 	let getToken = helpers.decodeToken(req.headers.authorization)
 	try{
 		// level 1 = admin, level = users
-		if (getToken.level == 1) {
+		if (getToken || getToken.level == 1) {
 			Product.find((err,respon)=>{
 				if (!err) {
 					res.json(respon)
 				}
 			})
 		}else{
-			throw new Error("Tidak Ada Akses!")
+			throw new Error(getToken.message)
 		}
 	}catch(err){
 		res.json({
@@ -28,19 +28,23 @@ exports.findProducts = function(req,res) {
 exports.createProduct = (req,res)=>{
 	let getToken = helpers.decodeToken(req.headers.authorization)
 	try{
-		let product = new Product(req.body);
-		// level 1 = admin, level = users
-		if (getToken.status == 1) {
-			product.save((err,respon)=>{
-				if (!err) {
-					res.json({
-						"status" : 201,
-						"message" : "Sucess Create Product"
-					})
-				}
-			})
+		if (getToken) {
+			let product = new Product(req.body);
+			// level 1 = admin, level = users
+			if (getToken.status == 1) {
+				product.save((err,respon)=>{
+					if (!err) {
+						res.json({
+							"status" : 201,
+							"message" : "Sucess Create Product"
+						})
+					}
+				})
+			}else{
+				throw new Error("Tidak Ada Akses")	
+			}
 		}else{
-			throw new Error("Tidak ada Akses!")
+			throw new Error(getToken.message)	
 		}
 
 	}catch(err){
@@ -55,12 +59,12 @@ exports.editProduct = (req,res) => {
 	try{
 		let getToken = helpers.decodeToken(req.headers.authorization)
 		// level 1 = admin, level = users
-		if(getToken.level == 1){
+		if(getToken  || getToken.level == 1){
 			Product.findOne({_id : req.params.id},(err,respon)=>{
 				if (!err) {
 					res.json(respon)
 				}else{
-					res.json(err)
+					throw new Error(err)
 				}
 			})
 		}else{
@@ -78,7 +82,7 @@ exports.updateProduct = (req,res)=>{
 	try{
 		let getToken = helpers.decodeToken(req.headers.authorization)
 		// level 1 = admin, level = users
-		if (getToken.level == 1) {
+		if (getToken  ||getToken.level == 1) {
 			Product.findOneAndUpdate({_id : req.params.id},{$set : {
 				nama  : req.body.nama,
 				jenis : req.body.jenis,
@@ -106,7 +110,7 @@ exports.updateProduct = (req,res)=>{
 exports.deleteProduct = (req,res)=>{
 	try{
 		let getToken = helpers.decodeToken(req.headers.authorization)
-		if (getToken.level == 1 && getToken) {
+		if (getToken  ||getToken.level == 1) {
 			Product.findOneAndRemove({_id : req.params.id}, (err,respon)=>{
 				if (respon != null || !err) {
 					res.json({
@@ -116,7 +120,7 @@ exports.deleteProduct = (req,res)=>{
 				}	
 			})
 		}else{
-			throw new Error(err)
+			throw new Error(getToken.message)
 		}
 	}catch(err){
 		res.json({
