@@ -42,6 +42,7 @@ exports.createUser = function(req,res){
 				let string_password = req.body.password;
 			    let password = bcrypt.hashSync(string_password, saltRounds);
 				if (respon == null) {
+					req.body.password = password
 					let newUser = new User(req.body)
 						// set token null 
 						newUser.token = "";
