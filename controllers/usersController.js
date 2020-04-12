@@ -24,13 +24,13 @@ exports.findUsers = function(req,res) {
 				}
 			})
 		}else{
-			res.json({
-				"status" : 404,
-				"message" : err.message
-			})
+			throw new Error(getToken.message)
 		}
 	}catch(err){
-		res.status(404).json(err.message)
+		res.json({
+			"status"  : 404,
+			"message" : err.message 
+		})
 	}
 }
 
@@ -65,7 +65,10 @@ exports.createUser = function(req,res){
 			throw new Error("Email Wrong!");
 		}
 	}catch(err){
-		res.status(404).json(err.message)
+		res.json({
+			"status"  : 404,
+			"message" : err.message 
+		})
 	}
 }
 
