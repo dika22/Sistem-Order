@@ -25,7 +25,7 @@ const orderSchema = new Schema({
 		required : true
 	},
 	status : {
-		type :String
+		type :String // 1 : VA 2 : CC 3 : paylater 
 	}
 })
 
