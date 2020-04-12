@@ -20,6 +20,10 @@ const orderSchema = new Schema({
 		type : String,
 		required : true
 	},
+	pay :{
+		type : String,
+		required : true
+	},
 	status : {
 		type :String
 	}

@@ -36,6 +36,8 @@ module.exports = function(app) {
     // Group Orders   
     app.route('/v1/listorders')
        .get(listOrders.findOrders); 
-     app.route('/v1/create-order')
-       .post(listOrders.createOrder);         
+    app.route('/v1/create-order')
+       .post(listOrders.createOrder); 
+     app.route('/v1/cancel-order/:id')
+       .get(listOrders.cancelOrders);            
 }

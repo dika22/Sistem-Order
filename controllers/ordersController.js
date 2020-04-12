@@ -28,7 +28,7 @@ exports.findOrders = function(req,res) {
 exports.createOrder = (req,res)=>{
 	try{
 	let getToken = helpers.decodeToken(req.headers.authorization)
-		if (getToken.level == 2) {
+		if (!err || getToken.level == 2) {
 			let newOrder = new Order(req.body)
 			newOrder.status = 1 // 1 : on proses 2 : cancel 
 			newOrder.save((err,respon)=>{
@@ -38,14 +38,33 @@ exports.createOrder = (req,res)=>{
 						"message" : "Orderan Berhasil!"
 					})
 				}else{
-					console.log(err)
+					throw new Error(err)
 				}
 			})
+		}else{
+			throw new Error(err)
 		}
 	}catch(err){
 		res.json({
 			"status" : 404,
 			"message" : err.message
+		})
+	}
+}
+
+exports.cancelOrders = function(req,res) {
+	let getToken = helpers.decodeToken(req.headers.authorization)
+	if(getToken){
+		Order.findOneAndUpdate({_id : req.params.id},{ $set:
+				{
+					status : 2,
+				}},(err,respon)=>{
+				if (!err) {
+					res.json({
+						"status" : 200,
+						"message" :"Success Cancel!"
+					})
+				}
 		})
 	}
 }
